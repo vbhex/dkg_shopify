@@ -1,0 +1,133 @@
+// This is your Prisma schema file
+// Learn more: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Store information about installed shops
+model Shop {
+  id                String   @id @default(uuid())
+  shopDomain        String   @unique
+  accessToken       String
+  scope             String?
+  isActive          Boolean  @default(true)
+  installedAt       DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Discount configuration
+  discountRules     DiscountRule[]
+  verifiedCustomers VerifiedCustomer[]
+  
+  @@index([shopDomain])
+}
+
+// Discount rules configured by shop owners
+model DiscountRule {
+  id                String   @id @default(uuid())
+  shopId            String
+  shop              Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  
+  // Rule configuration
+  name              String
+  description       String?
+  isActive          Boolean  @default(true)
+  
+  // Token requirements
+  minTokenAmount    String   // Store as string to handle large numbers
+  tokenContractAddress String
+  chainId           Int      @default(1) // 1 = Ethereum, 137 = Polygon, 56 = BSC
+  
+  // Discount settings
+  discountType      String   // "percentage" or "fixed"
+  discountValue     Float    // percentage (0-100) or fixed amount
+  maxDiscountAmount Float?   // Maximum discount cap for percentage discounts
+  
+  // Applicability
+  appliesToProducts String?  // JSON array of product IDs, null means all products
+  appliesToCollections String? // JSON array of collection IDs
+  
+  // Usage limits
+  usageLimit        Int?     // Total usage limit, null means unlimited
+  usageCount        Int      @default(0)
+  perCustomerLimit  Int?     // Per customer limit
+  
+  // Validity period
+  startsAt          DateTime?
+  endsAt            DateTime?
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  // Track which customers have used this discount
+  customerUsage     CustomerDiscountUsage[]
+  
+  @@index([shopId])
+}
+
+// Track verified customers and their wallet addresses
+model VerifiedCustomer {
+  id                String   @id @default(uuid())
+  shopId            String
+  shop              Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  
+  // Customer identification
+  customerId        String?  // Shopify customer ID (if logged in)
+  customerEmail     String?  // Customer email
+  sessionId         String?  // For guest checkouts
+  
+  // Blockchain verification
+  walletAddress     String
+  chainId           Int
+  tokenBalance      String   // Store as string to handle large numbers
+  lastVerifiedAt    DateTime @default(now())
+  
+  // Track discount usage
+  discountUsage     CustomerDiscountUsage[]
+  
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@unique([shopId, walletAddress])
+  @@index([shopId, customerEmail])
+  @@index([walletAddress])
+}
+
+// Track individual discount usage by customers
+model CustomerDiscountUsage {
+  id                String   @id @default(uuid())
+  
+  discountRuleId    String
+  discountRule      DiscountRule @relation(fields: [discountRuleId], references: [id], onDelete: Cascade)
+  
+  verifiedCustomerId String
+  verifiedCustomer  VerifiedCustomer @relation(fields: [verifiedCustomerId], references: [id], onDelete: Cascade)
+  
+  orderId           String?  // Shopify order ID
+  discountAmount    Float
+  usedAt            DateTime @default(now())
+  
+  @@index([discountRuleId])
+  @@index([verifiedCustomerId])
+}
+
+// Verification sessions for tracking wallet verification flow
+model VerificationSession {
+  id                String   @id @default(uuid())
+  shopDomain        String
+  sessionToken      String   @unique
+  walletAddress     String?
+  chainId           Int?
+  status            String   @default("pending") // "pending", "verified", "expired", "failed"
+  expiresAt         DateTime
+  createdAt         DateTime @default(now())
+  
+  @@index([sessionToken])
+  @@index([shopDomain])
+}
+
