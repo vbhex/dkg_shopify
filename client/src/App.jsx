@@ -1,9 +1,33 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { AppProvider, Page, Card, Navigation } from '@shopify/polaris';
-import { HomeMinor, DiscountsMajor, AnalyticsMinor } from '@shopify/polaris-icons';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { AppProvider, Frame, Navigation } from '@shopify/polaris';
 import Dashboard from './pages/Dashboard';
 import DiscountRules from './pages/DiscountRules';
 import Analytics from './pages/Analytics';
+
+function NavigationMarkup() {
+  const navigate = useNavigate();
+
+  return (
+    <Navigation location="/">
+      <Navigation.Section
+        items={[
+          {
+            label: 'Dashboard',
+            onClick: () => navigate('/'),
+          },
+          {
+            label: 'Discount Rules',
+            onClick: () => navigate('/discount-rules'),
+          },
+          {
+            label: 'Analytics',
+            onClick: () => navigate('/analytics'),
+          },
+        ]}
+      />
+    </Navigation>
+  );
+}
 
 function App() {
   const urlParams = new URLSearchParams(window.location.search);
@@ -22,38 +46,13 @@ function App() {
       }}
     >
       <BrowserRouter>
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
-          <div style={{ width: '240px', borderRight: '1px solid #ddd' }}>
-            <Navigation location="/">
-              <Navigation.Section
-                items={[
-                  {
-                    url: `/`,
-                    label: 'Dashboard',
-                    icon: HomeMinor,
-                  },
-                  {
-                    url: `/discount-rules`,
-                    label: 'Discount Rules',
-                    icon: DiscountsMajor,
-                  },
-                  {
-                    url: `/analytics`,
-                    label: 'Analytics',
-                    icon: AnalyticsMinor,
-                  },
-                ]}
-              />
-            </Navigation>
-          </div>
-          <div style={{ flex: 1 }}>
-            <Routes>
-              <Route path="/" element={<Dashboard shop={shop} host={host} />} />
-              <Route path="/discount-rules" element={<DiscountRules shop={shop} host={host} />} />
-              <Route path="/analytics" element={<Analytics shop={shop} host={host} />} />
-            </Routes>
-          </div>
-        </div>
+        <Frame navigation={<NavigationMarkup />}>
+          <Routes>
+            <Route path="/" element={<Dashboard shop={shop} host={host} />} />
+            <Route path="/discount-rules" element={<DiscountRules shop={shop} host={host} />} />
+            <Route path="/analytics" element={<Analytics shop={shop} host={host} />} />
+          </Routes>
+        </Frame>
       </BrowserRouter>
     </AppProvider>
   );

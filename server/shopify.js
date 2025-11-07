@@ -1,6 +1,10 @@
 import { shopifyApp } from '@shopify/shopify-app-express';
 import { SQLiteSessionStorage } from '@shopify/shopify-app-session-storage-sqlite';
 import { LATEST_API_VERSION } from '@shopify/shopify-api';
+import { config } from 'dotenv';
+
+// Load environment variables
+config({ path: '/deakee/dkg_shopify/.env' });
 
 const sessionStorage = new SQLiteSessionStorage('./shopify-sessions.db');
 
@@ -24,4 +28,3 @@ export const shopify = shopifyApp({
   },
   sessionStorage,
 });
-

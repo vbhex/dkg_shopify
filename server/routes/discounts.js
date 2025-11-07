@@ -8,7 +8,7 @@ const router = express.Router();
  * Get all discount rules for a shop
  * GET /api/discounts
  */
-router.get('/', shopify.authenticatedFetch(), async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const session = res.locals.shopify.session;
     const shop = await prisma.shop.findUnique({
@@ -35,7 +35,7 @@ router.get('/', shopify.authenticatedFetch(), async (req, res) => {
  * Create a new discount rule
  * POST /api/discounts
  */
-router.post('/', shopify.authenticatedFetch(), async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const session = res.locals.shopify.session;
     const shop = await prisma.shop.findUnique({
@@ -107,7 +107,7 @@ router.post('/', shopify.authenticatedFetch(), async (req, res) => {
  * Update a discount rule
  * PUT /api/discounts/:id
  */
-router.put('/:id', shopify.authenticatedFetch(), async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const session = res.locals.shopify.session;
     const { id } = req.params;
@@ -180,7 +180,7 @@ router.put('/:id', shopify.authenticatedFetch(), async (req, res) => {
  * Delete a discount rule
  * DELETE /api/discounts/:id
  */
-router.delete('/:id', shopify.authenticatedFetch(), async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const session = res.locals.shopify.session;
     const { id } = req.params;
@@ -217,7 +217,7 @@ router.delete('/:id', shopify.authenticatedFetch(), async (req, res) => {
  * Get discount statistics
  * GET /api/discounts/stats
  */
-router.get('/stats', shopify.authenticatedFetch(), async (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
     const session = res.locals.shopify.session;
     const shop = await prisma.shop.findUnique({

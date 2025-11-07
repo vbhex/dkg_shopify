@@ -4,7 +4,6 @@ import {
   Layout,
   Card,
   TextContainer,
-  Heading,
   Text,
   Banner,
   List,
@@ -53,7 +52,7 @@ function Dashboard({ shop, host }) {
         <Layout.Section>
           <Card sectioned>
             <TextContainer>
-              <Heading>Getting Started</Heading>
+              <Text variant="headingMd" as="h2">Getting Started</Text>
               <List type="number">
                 <List.Item>Create discount rules based on DKG token ownership</List.Item>
                 <List.Item>Configure minimum token requirements and discount amounts</List.Item>

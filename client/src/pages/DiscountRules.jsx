@@ -8,10 +8,7 @@ import {
   FormLayout,
   TextField,
   Select,
-  Checkbox,
   Badge,
-  Stack,
-  TextContainer,
   Banner,
 } from '@shopify/polaris';
 
@@ -181,7 +178,7 @@ function DiscountRules({ shop, host }) {
       ? `${rule.discountValue}%`
       : `$${rule.discountValue}`,
     `${rule.usageCount}${rule.usageLimit ? ` / ${rule.usageLimit}` : ''}`,
-    <Stack spacing="tight">
+    <div style={{ display: 'flex', gap: '8px' }}>
       <Button size="slim" onClick={() => handleModalOpen(rule)}>
         Edit
       </Button>
@@ -191,7 +188,7 @@ function DiscountRules({ shop, host }) {
       <Button size="slim" destructive onClick={() => handleDelete(rule.id)}>
         Delete
       </Button>
-    </Stack>,
+    </div>,
   ]);
 
   return (
@@ -205,9 +202,7 @@ function DiscountRules({ shop, host }) {
       <Card>
         {rules.length === 0 ? (
           <Card.Section>
-            <TextContainer>
-              <p>No discount rules yet. Create your first rule to get started!</p>
-            </TextContainer>
+            <p>No discount rules yet. Create your first rule to get started!</p>
           </Card.Section>
         ) : (
           <DataTable

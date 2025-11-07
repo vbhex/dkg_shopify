@@ -1,6 +1,10 @@
 import '@shopify/shopify-api/adapters/node';
 import express from 'express';
 import { config } from 'dotenv';
+
+// Load environment variables FIRST
+config({ path: '/deakee/dkg_shopify/.env' });
+
 import { shopify } from './shopify.js';
 import prisma from './db.js';
 import verifyRoutes from './routes/verify.js';
@@ -96,7 +100,7 @@ app.use('/api/verify', verifyRoutes);
 app.use('/api/discounts', discountRoutes);
 
 // Shop info endpoint
-app.get('/api/shop', shopify.authenticatedFetch(), async (req, res) => {
+app.get('/api/shop', async (req, res) => {
   try {
     const session = res.locals.shopify.session;
     const shop = await prisma.shop.findUnique({
