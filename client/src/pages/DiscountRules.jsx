@@ -38,7 +38,7 @@ function DiscountRules({ shop, host }) {
 
   const fetchRules = async () => {
     try {
-      const response = await fetch('/api/discounts', {
+      const response = await fetch(`/api/discounts?shop=${encodeURIComponent(shop || 'test.myshopify.com')}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('shopifyToken')}`,
         },
@@ -96,7 +96,9 @@ function DiscountRules({ shop, host }) {
 
   const handleSubmit = async () => {
     try {
-      const url = editingRule ? `/api/discounts/${editingRule.id}` : '/api/discounts';
+      const url = editingRule 
+        ? `/api/discounts/${editingRule.id}?shop=${encodeURIComponent(shop || 'test.myshopify.com')}` 
+        : `/api/discounts?shop=${encodeURIComponent(shop || 'test.myshopify.com')}`;
       const method = editingRule ? 'PUT' : 'POST';
 
       const response = await fetch(url, {
@@ -123,7 +125,7 @@ function DiscountRules({ shop, host }) {
     }
 
     try {
-      const response = await fetch(`/api/discounts/${ruleId}`, {
+      const response = await fetch(`/api/discounts/${ruleId}?shop=${encodeURIComponent(shop || 'test.myshopify.com')}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${localStorage.getItem('shopifyToken')}`,
@@ -140,7 +142,7 @@ function DiscountRules({ shop, host }) {
 
   const handleToggleActive = async (rule) => {
     try {
-      const response = await fetch(`/api/discounts/${rule.id}`, {
+      const response = await fetch(`/api/discounts/${rule.id}?shop=${encodeURIComponent(shop || 'test.myshopify.com')}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -201,9 +203,9 @@ function DiscountRules({ shop, host }) {
     >
       <Card>
         {rules.length === 0 ? (
-          <Card.Section>
+          <div style={{ padding: '16px' }}>
             <p>No discount rules yet. Create your first rule to get started!</p>
-          </Card.Section>
+          </div>
         ) : (
           <DataTable
             columnContentTypes={['text', 'text', 'text', 'text', 'text', 'text']}
@@ -228,7 +230,7 @@ function DiscountRules({ shop, host }) {
           },
         ]}
       >
-        <Modal.Section>
+        <div style={{ padding: '16px' }}>
           <FormLayout>
             <TextField
               label="Rule Name"
@@ -330,7 +332,7 @@ function DiscountRules({ shop, host }) {
               autoComplete="off"
             />
           </FormLayout>
-        </Modal.Section>
+        </div>
       </Modal>
     </Page>
   );

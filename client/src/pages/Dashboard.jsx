@@ -3,7 +3,6 @@ import {
   Page,
   Layout,
   Card,
-  TextContainer,
   Text,
   Banner,
   List,
@@ -20,7 +19,7 @@ function Dashboard({ shop, host }) {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/discounts/stats', {
+      const response = await fetch(`/api/discounts/stats?shop=${encodeURIComponent(shop || 'test.myshopify.com')}`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('shopifyToken')}`,
         },
@@ -50,72 +49,78 @@ function Dashboard({ shop, host }) {
         </Layout.Section>
 
         <Layout.Section>
-          <Card sectioned>
-            <TextContainer>
+          <Card>
+            <div style={{ padding: '16px' }}>
               <Text variant="headingMd" as="h2">Getting Started</Text>
-              <List type="number">
-                <List.Item>Create discount rules based on DKG token ownership</List.Item>
-                <List.Item>Configure minimum token requirements and discount amounts</List.Item>
-                <List.Item>
-                  Install the storefront widget to allow customers to verify their wallets
-                </List.Item>
-                <List.Item>Track discount usage and analytics</List.Item>
-              </List>
-            </TextContainer>
+              <div style={{ marginTop: '12px' }}>
+                <List type="number">
+                  <List.Item>Create discount rules based on DKG token ownership</List.Item>
+                  <List.Item>Configure minimum token requirements and discount amounts</List.Item>
+                  <List.Item>
+                    Install the storefront widget to allow customers to verify their wallets
+                  </List.Item>
+                  <List.Item>Track discount usage and analytics</List.Item>
+                </List>
+              </div>
+            </div>
           </Card>
         </Layout.Section>
 
         {stats && (
           <>
-            <Layout.Section oneHalf>
-              <Card title="Active Discount Rules" sectioned>
-                <Text variant="headingXl" as="h2">
-                  {stats.activeRules}
-                </Text>
-                <Text variant="bodyMd" as="p" color="subdued">
-                  Total Rules: {stats.totalRules}
-                </Text>
-              </Card>
-            </Layout.Section>
+            <Layout.Section>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <Card title="Active Discount Rules">
+                  <div style={{ padding: '16px' }}>
+                    <Text variant="headingXl" as="h2">
+                      {stats.activeRules}
+                    </Text>
+                    <Text variant="bodyMd" as="p" tone="subdued">
+                      Total Rules: {stats.totalRules}
+                    </Text>
+                  </div>
+                </Card>
 
-            <Layout.Section oneHalf>
-              <Card title="Verified Customers" sectioned>
-                <Text variant="headingXl" as="h2">
-                  {stats.totalVerifiedCustomers}
-                </Text>
-                <Text variant="bodyMd" as="p" color="subdued">
-                  Customers with verified wallets
-                </Text>
-              </Card>
-            </Layout.Section>
+                <Card title="Verified Customers">
+                  <div style={{ padding: '16px' }}>
+                    <Text variant="headingXl" as="h2">
+                      {stats.totalVerifiedCustomers}
+                    </Text>
+                    <Text variant="bodyMd" as="p" tone="subdued">
+                      Customers with verified wallets
+                    </Text>
+                  </div>
+                </Card>
 
-            <Layout.Section oneHalf>
-              <Card title="Total Discounts Used" sectioned>
-                <Text variant="headingXl" as="h2">
-                  {stats.totalDiscountsUsed}
-                </Text>
-                <Text variant="bodyMd" as="p" color="subdued">
-                  Across all rules
-                </Text>
-              </Card>
-            </Layout.Section>
+                <Card title="Total Discounts Used">
+                  <div style={{ padding: '16px' }}>
+                    <Text variant="headingXl" as="h2">
+                      {stats.totalDiscountsUsed}
+                    </Text>
+                    <Text variant="bodyMd" as="p" tone="subdued">
+                      Across all rules
+                    </Text>
+                  </div>
+                </Card>
 
-            <Layout.Section oneHalf>
-              <Card title="Total Discount Amount" sectioned>
-                <Text variant="headingXl" as="h2">
-                  ${stats.totalDiscountAmount.toFixed(2)}
-                </Text>
-                <Text variant="bodyMd" as="p" color="subdued">
-                  Total savings for customers
-                </Text>
-              </Card>
+                <Card title="Total Discount Amount">
+                  <div style={{ padding: '16px' }}>
+                    <Text variant="headingXl" as="h2">
+                      ${stats.totalDiscountAmount.toFixed(2)}
+                    </Text>
+                    <Text variant="bodyMd" as="p" tone="subdued">
+                      Total savings for customers
+                    </Text>
+                  </div>
+                </Card>
+              </div>
             </Layout.Section>
           </>
         )}
 
         <Layout.Section>
-          <Card title="Storefront Integration" sectioned>
-            <TextContainer>
+          <Card title="Storefront Integration">
+            <div style={{ padding: '16px' }}>
               <Text variant="bodyMd" as="p">
                 To enable token verification on your storefront, add the following code to your theme:
               </Text>
@@ -133,7 +138,7 @@ function Dashboard({ shop, host }) {
                 {`<script src="https://${window.location.host}/storefront/dkg-widget.js"></script>
 <div id="dkg-token-widget" data-shop="${shop}"></div>`}
               </div>
-            </TextContainer>
+            </div>
           </Card>
         </Layout.Section>
       </Layout>

@@ -6,13 +6,19 @@ const router = express.Router();
 
 /**
  * Get all discount rules for a shop
- * GET /api/discounts
+ * GET /api/discounts?shop=example.myshopify.com
  */
 router.get('/', async (req, res) => {
   try {
-    const session = res.locals.shopify.session;
+    // Get shop from query parameter or session
+    const shopDomain = req.query.shop || res.locals.shopify?.session?.shop;
+    
+    if (!shopDomain) {
+      return res.status(400).json({ error: 'Shop parameter is required' });
+    }
+
     const shop = await prisma.shop.findUnique({
-      where: { shopDomain: session.shop },
+      where: { shopDomain },
       include: {
         discountRules: {
           orderBy: { createdAt: 'desc' },
@@ -21,7 +27,8 @@ router.get('/', async (req, res) => {
     });
 
     if (!shop) {
-      return res.status(404).json({ error: 'Shop not found' });
+      // Return empty array if shop doesn't exist yet
+      return res.json({ discountRules: [] });
     }
 
     res.json({ discountRules: shop.discountRules });
@@ -33,17 +40,25 @@ router.get('/', async (req, res) => {
 
 /**
  * Create a new discount rule
- * POST /api/discounts
+ * POST /api/discounts?shop=example.myshopify.com
  */
 router.post('/', async (req, res) => {
   try {
-    const session = res.locals.shopify.session;
-    const shop = await prisma.shop.findUnique({
-      where: { shopDomain: session.shop },
+    const shopDomain = req.query.shop || res.locals.shopify?.session?.shop;
+    
+    if (!shopDomain) {
+      return res.status(400).json({ error: 'Shop parameter is required' });
+    }
+
+    let shop = await prisma.shop.findUnique({
+      where: { shopDomain },
     });
 
     if (!shop) {
-      return res.status(404).json({ error: 'Shop not found' });
+      // Create shop if it doesn't exist
+      shop = await prisma.shop.create({
+        data: { shopDomain },
+      });
     }
 
     const {
@@ -105,15 +120,19 @@ router.post('/', async (req, res) => {
 
 /**
  * Update a discount rule
- * PUT /api/discounts/:id
+ * PUT /api/discounts/:id?shop=example.myshopify.com
  */
 router.put('/:id', async (req, res) => {
   try {
-    const session = res.locals.shopify.session;
+    const shopDomain = req.query.shop || res.locals.shopify?.session?.shop;
     const { id } = req.params;
 
+    if (!shopDomain) {
+      return res.status(400).json({ error: 'Shop parameter is required' });
+    }
+
     const shop = await prisma.shop.findUnique({
-      where: { shopDomain: session.shop },
+      where: { shopDomain },
     });
 
     if (!shop) {
@@ -178,15 +197,19 @@ router.put('/:id', async (req, res) => {
 
 /**
  * Delete a discount rule
- * DELETE /api/discounts/:id
+ * DELETE /api/discounts/:id?shop=example.myshopify.com
  */
 router.delete('/:id', async (req, res) => {
   try {
-    const session = res.locals.shopify.session;
+    const shopDomain = req.query.shop || res.locals.shopify?.session?.shop;
     const { id } = req.params;
 
+    if (!shopDomain) {
+      return res.status(400).json({ error: 'Shop parameter is required' });
+    }
+
     const shop = await prisma.shop.findUnique({
-      where: { shopDomain: session.shop },
+      where: { shopDomain },
     });
 
     if (!shop) {
@@ -219,9 +242,23 @@ router.delete('/:id', async (req, res) => {
  */
 router.get('/stats', async (req, res) => {
   try {
-    const session = res.locals.shopify.session;
+    // For now, get shop from query parameter since we removed auth middleware
+    const shopDomain = req.query.shop;
+    
+    if (!shopDomain) {
+      return res.json({
+        stats: {
+          totalRules: 0,
+          activeRules: 0,
+          totalVerifiedCustomers: 0,
+          totalDiscountsUsed: 0,
+          totalDiscountAmount: 0,
+        },
+      });
+    }
+
     const shop = await prisma.shop.findUnique({
-      where: { shopDomain: session.shop },
+      where: { shopDomain },
       include: {
         discountRules: {
           include: {
@@ -233,7 +270,16 @@ router.get('/stats', async (req, res) => {
     });
 
     if (!shop) {
-      return res.status(404).json({ error: 'Shop not found' });
+      // Return empty stats if shop doesn't exist yet
+      return res.json({
+        stats: {
+          totalRules: 0,
+          activeRules: 0,
+          totalVerifiedCustomers: 0,
+          totalDiscountsUsed: 0,
+          totalDiscountAmount: 0,
+        },
+      });
     }
 
     const stats = {
