@@ -190,12 +190,19 @@ function DiscountRules({ shop, host }) {
 
   return (
     <Page
-      title="Discount Rules"
+      title="Your Discount Rules"
+      subtitle={`Managing rules for: ${shop || 'test.myshopify.com'}`}
       primaryAction={{
         content: 'Create Rule',
         onAction: () => handleModalOpen(),
       }}
     >
+      <div style={{ marginBottom: '16px' }}>
+        <Banner status="info">
+          <p><strong>Multi-Tenant Setup:</strong> These discount rules apply only to YOUR store. Each Shopify merchant who installs this app manages their own independent set of rules.</p>
+        </Banner>
+      </div>
+
       <Card>
         {rules.length === 0 ? (
           <div style={{ padding: '16px' }}>

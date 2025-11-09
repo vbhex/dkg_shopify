@@ -1,17 +1,42 @@
 # DKG Shopify App - Token-Gated Discounts
 
-A Shopify app that enables store owners to offer exclusive discounts to DeakeeGroup Token (DKG) holders. Customers can verify their wallet ownership and automatically receive discounts based on their token balance.
+A **multi-tenant** Shopify app that enables store owners to offer exclusive discounts to DeakeeGroup Token (DKG) holders. Each merchant who installs the app can create and manage their own independent discount rules. Customers can verify their wallet ownership and automatically receive discounts based on their token balance.
+
+## 🎯 Multi-Tenant Architecture
+
+**Important:** This app is designed for multiple independent Shopify stores:
+- ✅ Each merchant manages their own discount rules
+- ✅ Complete data isolation between stores
+- ✅ Shared DKG token contract (configured by app owner)
+- ✅ Will be embedded in each merchant's Shopify Admin (production)
+
+👉 **[Read Architecture Documentation](docs/ARCHITECTURE.md)** for full details on multi-tenant design  
+👉 **[Read Embedded App Guide](docs/EMBEDDED_APP.md)** to understand production deployment
 
 ## 🌟 Features
 
 - **Token-Gated Discounts**: Create discount rules based on DKG token ownership
-- **Multi-Chain Support**: Support for Ethereum, Polygon, and Binance Smart Chain
+- **Multi-Tenant**: Each Shopify store manages independent discount rules
+- **Ethereum Sepolia Network**: Currently deployed on Ethereum testnet
 - **Flexible Discount Types**: Percentage or fixed amount discounts
 - **Usage Limits**: Set total and per-customer usage limits
 - **Wallet Verification**: Secure Web3 wallet verification using MetaMask
 - **Beautiful Storefront Widget**: Embeddable widget for customer-facing token verification
-- **Admin Dashboard**: Easy-to-use interface for managing discount rules
-- **Analytics**: Track discount usage and customer engagement
+- **Admin Dashboard**: Easy-to-use interface for managing discount rules (per store)
+- **Analytics**: Track discount usage and customer engagement (per store)
+
+## 🏗️ Current Setup
+
+**Demo Mode:** `https://group.deakee.com`
+- Testing and demonstration interface
+- Manual shop parameter: `?shop=your-store.myshopify.com`
+- All features functional for testing
+
+**Production Mode:** (To be implemented)
+- Embedded in Shopify Admin
+- Automatic OAuth authentication
+- Available in Shopify App Store
+- See [Embedded App Guide](docs/EMBEDDED_APP.md)
 
 ## 📋 Table of Contents
 

@@ -38,12 +38,15 @@ function Dashboard({ shop, host }) {
       <Layout>
         <Layout.Section>
           <Banner
-            title="Welcome to DKG Token Discounts"
+            title="Demo Mode - Your Store's Discount Manager"
             status="info"
           >
             <p>
-              This app allows your customers who hold DKG tokens to receive exclusive discounts.
-              Set up discount rules and track usage from this dashboard.
+              <strong>Store: {shop || 'test.myshopify.com'}</strong>
+            </p>
+            <p style={{ marginTop: '8px' }}>
+              You are managing discount rules for YOUR store only. In production, this interface will be embedded directly in your Shopify Admin.
+              Other stores cannot see or modify your rules - each merchant controls their own discounts.
             </p>
           </Banner>
         </Layout.Section>

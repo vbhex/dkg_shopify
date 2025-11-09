@@ -6,6 +6,7 @@ import {
   DataTable,
   Text,
   Badge,
+  Banner,
 } from '@shopify/polaris';
 
 function Analytics({ shop, host }) {
@@ -33,7 +34,13 @@ function Analytics({ shop, host }) {
   };
 
   return (
-    <Page title="Analytics">
+    <Page title="Your Analytics" subtitle={`Statistics for: ${shop || 'test.myshopify.com'}`}>
+      <div style={{ marginBottom: '16px' }}>
+        <Banner>
+          <p>View discount usage and token holder statistics for your store. Data is isolated to your shop only.</p>
+        </Banner>
+      </div>
+
       <Layout>
         <Layout.Section>
           <Card title="Overview">
