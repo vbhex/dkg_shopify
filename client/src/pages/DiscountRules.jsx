@@ -21,8 +21,7 @@ function DiscountRules({ shop, host }) {
     name: '',
     description: '',
     minTokenAmount: '',
-    tokenContractAddress: '',
-    chainId: '1',
+    chainId: '11155111', // Ethereum Sepolia
     discountType: 'percentage',
     discountValue: '',
     maxDiscountAmount: '',
@@ -59,7 +58,6 @@ function DiscountRules({ shop, host }) {
         name: rule.name,
         description: rule.description || '',
         minTokenAmount: rule.minTokenAmount,
-        tokenContractAddress: rule.tokenContractAddress,
         chainId: rule.chainId.toString(),
         discountType: rule.discountType,
         discountValue: rule.discountValue.toString(),
@@ -75,8 +73,7 @@ function DiscountRules({ shop, host }) {
         name: '',
         description: '',
         minTokenAmount: '',
-        tokenContractAddress: '',
-        chainId: '1',
+        chainId: '11155111', // Ethereum Sepolia
         discountType: 'percentage',
         discountValue: '',
         maxDiscountAmount: '',
@@ -160,9 +157,7 @@ function DiscountRules({ shop, host }) {
   };
 
   const chainOptions = [
-    { label: 'Ethereum Mainnet', value: '1' },
-    { label: 'Polygon', value: '137' },
-    { label: 'Binance Smart Chain', value: '56' },
+    { label: 'Ethereum Sepolia (Testnet)', value: '11155111' },
   ];
 
   const discountTypeOptions = [
@@ -247,20 +242,9 @@ function DiscountRules({ shop, host }) {
               autoComplete="off"
             />
 
-            <TextField
-              label="Token Contract Address"
-              value={formData.tokenContractAddress}
-              onChange={(value) => setFormData({ ...formData, tokenContractAddress: value })}
-              placeholder="0x..."
-              autoComplete="off"
-            />
-
-            <Select
-              label="Blockchain Network"
-              options={chainOptions}
-              value={formData.chainId}
-              onChange={(value) => setFormData({ ...formData, chainId: value })}
-            />
+            <Banner status="info">
+              <p>Using DKG Token on Ethereum Sepolia Network</p>
+            </Banner>
 
             <TextField
               label="Minimum Token Amount"

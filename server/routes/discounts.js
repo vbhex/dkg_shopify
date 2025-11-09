@@ -65,7 +65,6 @@ router.post('/', async (req, res) => {
       name,
       description,
       minTokenAmount,
-      tokenContractAddress,
       chainId,
       discountType,
       discountValue,
@@ -78,9 +77,16 @@ router.post('/', async (req, res) => {
       endsAt,
     } = req.body;
 
+    // Use token contract address from environment variable
+    const tokenContractAddress = process.env.DKG_TOKEN_CONTRACT_ADDRESS;
+
     // Validation
-    if (!name || !minTokenAmount || !tokenContractAddress || !discountType || !discountValue) {
+    if (!name || !minTokenAmount || !discountType || !discountValue) {
       return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    if (!tokenContractAddress) {
+      return res.status(500).json({ error: 'Token contract address not configured' });
     }
 
     if (discountType !== 'percentage' && discountType !== 'fixed') {
@@ -98,7 +104,7 @@ router.post('/', async (req, res) => {
         description,
         minTokenAmount: minTokenAmount.toString(),
         tokenContractAddress: tokenContractAddress.toLowerCase(),
-        chainId: chainId || 1,
+        chainId: chainId || 11155111, // Default to Ethereum Sepolia
         discountType,
         discountValue: parseFloat(discountValue),
         maxDiscountAmount: maxDiscountAmount ? parseFloat(maxDiscountAmount) : null,
