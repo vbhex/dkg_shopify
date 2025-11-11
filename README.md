@@ -252,12 +252,17 @@ pm2 startup
 
 #### 3. Add Widget to Storefront
 
-Add this code to your theme (e.g., in `product.liquid` or `cart.liquid`):
+Add this code to your theme's `theme.liquid` file (just before the closing `</body>` tag):
 
 ```html
-<script src="https://your-app-url.com/storefront/dkg-widget.js"></script>
+<script src="https://group.deakee.com/storefront/dkg-widget.js" defer></script>
 <div id="dkg-token-widget" data-shop="{{ shop.permanent_domain }}"></div>
 ```
+
+**Notes:**
+- The `defer` attribute prevents blocking page rendering (fixes Shopify's ParserBlockingScript warning)
+- `{{ shop.permanent_domain }}` is a Liquid variable that automatically passes your shop's domain
+- You can also add this to specific pages like `product.liquid` or `cart.liquid` if you only want it on certain pages
 
 ### For Customers
 

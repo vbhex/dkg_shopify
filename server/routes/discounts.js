@@ -55,9 +55,12 @@ router.post('/', async (req, res) => {
     });
 
     if (!shop) {
-      // Create shop if it doesn't exist
+      // Create shop if it doesn't exist (demo mode)
       shop = await prisma.shop.create({
-        data: { shopDomain },
+        data: { 
+          shopDomain,
+          accessToken: 'demo-token', // Placeholder for demo mode
+        },
       });
     }
 
@@ -104,7 +107,7 @@ router.post('/', async (req, res) => {
         description,
         minTokenAmount: minTokenAmount.toString(),
         tokenContractAddress: tokenContractAddress.toLowerCase(),
-        chainId: chainId || 11155111, // Default to Ethereum Sepolia
+        chainId: chainId ? parseInt(chainId) : 11155111, // Default to Ethereum Sepolia
         discountType,
         discountValue: parseFloat(discountValue),
         maxDiscountAmount: maxDiscountAmount ? parseFloat(maxDiscountAmount) : null,

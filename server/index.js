@@ -233,6 +233,13 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// Serve storefront widget files (MUST be before client build catch-all)
+const storefrontPath = path.join(__dirname, '../storefront');
+app.use('/storefront', express.static(storefrontPath, {
+  maxAge: '1h',
+  immutable: true,
+}));
+
 // Serve static files from client build in production
 if (process.env.NODE_ENV === 'production') {
   const clientBuildPath = path.join(__dirname, '../client/dist');

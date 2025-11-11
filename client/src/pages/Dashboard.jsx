@@ -125,7 +125,7 @@ function Dashboard({ shop, host }) {
           <Card title="Storefront Integration">
             <div style={{ padding: '16px' }}>
               <Text variant="bodyMd" as="p">
-                To enable token verification on your storefront, add the following code to your theme:
+                To enable token verification on your storefront, add the following code to your theme's <code>theme.liquid</code> file (just before the closing <code>&lt;/body&gt;</code> tag):
               </Text>
               <div
                 style={{
@@ -138,9 +138,12 @@ function Dashboard({ shop, host }) {
                   overflow: 'auto',
                 }}
               >
-                {`<script src="https://${window.location.host}/storefront/dkg-widget.js"></script>
-<div id="dkg-token-widget" data-shop="${shop}"></div>`}
+                {`<script src="https://${window.location.host}/storefront/dkg-widget.js" defer></script>
+<div id="dkg-token-widget" data-shop="{{ shop.permanent_domain }}"></div>`}
               </div>
+              <Text variant="bodySm" as="p" tone="subdued" style={{ marginTop: '12px' }}>
+                The <code>defer</code> attribute prevents blocking page rendering. The <code>{'{{ shop.permanent_domain }}'}</code> Liquid variable automatically passes your shop's domain.
+              </Text>
             </div>
           </Card>
         </Layout.Section>
