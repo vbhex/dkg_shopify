@@ -3,38 +3,40 @@
 
   // Widget Configuration
   const WIDGET_ID = 'dkg-token-widget';
-  const API_BASE_URL = window.location.origin;
+  const API_BASE_URL = 'https://group.deakee.com';
 
   // Widget Styles
   const widgetStyles = `
     .dkg-widget {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 12px;
-      padding: 24px;
+      border-radius: 8px;
+      padding: 16px;
       color: white;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      max-width: 400px;
+      margin: 20px auto;
     }
 
     .dkg-widget-title {
-      font-size: 24px;
+      font-size: 18px;
       font-weight: 700;
-      margin: 0 0 8px 0;
+      margin: 0 0 4px 0;
     }
 
     .dkg-widget-subtitle {
-      font-size: 14px;
+      font-size: 13px;
       opacity: 0.9;
-      margin: 0 0 20px 0;
+      margin: 0 0 12px 0;
     }
 
     .dkg-widget-button {
       background: white;
       color: #667eea;
       border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 16px;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: transform 0.2s, box-shadow 0.2s;
@@ -42,8 +44,8 @@
     }
 
     .dkg-widget-button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .dkg-widget-button:disabled {
@@ -52,25 +54,25 @@
     }
 
     .dkg-widget-status {
-      margin-top: 16px;
-      padding: 12px;
+      margin-top: 12px;
+      padding: 10px;
       background: rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      font-size: 14px;
+      border-radius: 6px;
+      font-size: 13px;
     }
 
     .dkg-widget-discounts {
-      margin-top: 16px;
+      margin-top: 12px;
       background: rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      padding: 16px;
+      border-radius: 6px;
+      padding: 12px;
     }
 
     .dkg-widget-discount-item {
       background: rgba(255, 255, 255, 0.2);
-      padding: 12px;
+      padding: 10px;
       border-radius: 6px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .dkg-widget-discount-item:last-child {
@@ -80,10 +82,11 @@
     .dkg-widget-discount-name {
       font-weight: 600;
       margin-bottom: 4px;
+      font-size: 14px;
     }
 
     .dkg-widget-discount-value {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 700;
       color: #ffd700;
     }
@@ -91,19 +94,19 @@
     .dkg-widget-error {
       background: rgba(255, 0, 0, 0.2);
       color: white;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 16px;
-      font-size: 14px;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 12px;
+      font-size: 13px;
     }
 
     .dkg-widget-success {
       background: rgba(0, 255, 0, 0.2);
       color: white;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 16px;
-      font-size: 14px;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 12px;
+      font-size: 13px;
     }
 
     .dkg-widget-loader {
@@ -122,18 +125,18 @@
 
     .dkg-wallet-info {
       background: rgba(255, 255, 255, 0.2);
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 16px;
-      font-size: 13px;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 12px;
+      font-size: 12px;
     }
 
     .dkg-widget-code {
       background: rgba(0, 0, 0, 0.3);
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 6px;
       font-family: monospace;
-      font-size: 14px;
+      font-size: 13px;
       margin-top: 8px;
       word-break: break-all;
     }
@@ -160,8 +163,11 @@
       // Render widget
       this.render();
 
-      // Check if already connected
-      this.checkExistingConnection();
+      // Wait a bit for cart drawer to be fully rendered, then attach listeners
+      setTimeout(() => {
+        this.attachButtonListener();
+        this.checkExistingConnection();
+      }, 100);
     }
 
     injectStyles() {
@@ -184,10 +190,34 @@
           <div id="dkg-widget-content"></div>
         </div>
       `;
+    }
 
-      // Attach event listeners
-      const connectButton = document.getElementById('dkg-connect-button');
-      connectButton.addEventListener('click', () => this.connectWallet());
+    attachButtonListener() {
+      const connectButton = this.container.querySelector('#dkg-connect-button');
+      if (connectButton) {
+        // Remove any existing listeners
+        connectButton.replaceWith(connectButton.cloneNode(true));
+        
+        // Get the new button and attach listener
+        const newButton = this.container.querySelector('#dkg-connect-button');
+        if (newButton) {
+          newButton.addEventListener('click', () => this.handleButtonClick());
+        }
+      } else {
+        console.warn('DKG Widget: Connect button not found, retrying...');
+        // Retry after a short delay
+        setTimeout(() => this.attachButtonListener(), 50);
+      }
+    }
+
+    handleButtonClick() {
+      if (this.walletAddress) {
+        // If already connected, disconnect
+        this.disconnectWallet();
+      } else {
+        // If not connected, connect
+        this.connectWallet();
+      }
     }
 
     async checkExistingConnection() {
@@ -200,12 +230,40 @@
           
           if (accounts.length > 0) {
             this.walletAddress = accounts[0];
-            this.updateButtonState('Connected', true);
-            // Don't auto-verify, wait for user action
+            this.updateButtonState('Disconnect Wallet', false);
+            this.showWalletInfo();
           }
         } catch (error) {
           console.error('Error checking connection:', error);
         }
+      }
+    }
+
+    disconnectWallet() {
+      // Reset widget state
+      this.walletAddress = null;
+      this.sessionToken = null;
+      this.eligibleDiscounts = [];
+      
+      // Clear content
+      const contentDiv = this.container.querySelector('#dkg-widget-content');
+      if (contentDiv) {
+        contentDiv.innerHTML = '';
+      }
+      
+      // Update button
+      this.updateButtonState('Connect Wallet', false);
+    }
+
+    showWalletInfo() {
+      const contentDiv = this.container.querySelector('#dkg-widget-content');
+      if (contentDiv) {
+        contentDiv.innerHTML = `
+          <div class="dkg-wallet-info">
+            Connected: ${this.formatAddress(this.walletAddress)}<br>
+            <span style="font-size: 11px; opacity: 0.8;">Click "Disconnect Wallet" above or verify your tokens to see discounts</span>
+          </div>
+        `;
       }
     }
 
@@ -341,7 +399,7 @@
             Connected: ${this.formatAddress(this.walletAddress)}
           </div>
         `;
-        this.updateButtonState('Verified - No Discounts Available', true);
+        this.updateButtonState('Disconnect Wallet', false);
         return;
       }
 
@@ -383,7 +441,7 @@
         </div>
       `;
 
-      this.updateButtonState('Verified ✓', true);
+      this.updateButtonState('Disconnect Wallet', false);
     }
 
     async applyDiscount(discountRuleId) {
@@ -417,7 +475,8 @@
     }
 
     showDiscountCode(code, rule) {
-      const contentDiv = document.getElementById('dkg-widget-content');
+      const contentDiv = this.container.querySelector('#dkg-widget-content');
+      if (!contentDiv) return;
       
       contentDiv.innerHTML = `
         <div class="dkg-widget-success">
@@ -439,7 +498,9 @@
     }
 
     showError(message) {
-      const contentDiv = document.getElementById('dkg-widget-content');
+      const contentDiv = this.container.querySelector('#dkg-widget-content');
+      if (!contentDiv) return;
+      
       contentDiv.innerHTML = `
         <div class="dkg-widget-error">
           ⚠️ ${message}
@@ -448,7 +509,7 @@
     }
 
     updateButtonState(text, disabled) {
-      const button = document.getElementById('dkg-connect-button');
+      const button = this.container.querySelector('#dkg-connect-button');
       if (button) {
         button.textContent = text;
         button.disabled = disabled;
@@ -460,11 +521,19 @@
     }
   }
 
+  // Track initialized widgets to avoid duplicates
+  const initializedWidgets = new WeakSet();
+
   // Initialize widget on page load
   function initializeWidget() {
     const widgets = document.querySelectorAll(`#${WIDGET_ID}`);
     
     widgets.forEach(widget => {
+      // Skip if already initialized
+      if (initializedWidgets.has(widget)) {
+        return;
+      }
+
       const shop = widget.getAttribute('data-shop');
       
       if (!shop) {
@@ -472,19 +541,60 @@
         return;
       }
 
-      window.dkgWidget = new DKGTokenWidget(widget, shop);
+      // Mark as initialized
+      initializedWidgets.add(widget);
+      
+      // Create widget instance
+      new DKGTokenWidget(widget, shop);
     });
+  }
+
+  // Watch for dynamically added cart drawer content
+  function observeCartDrawer() {
+    const observer = new MutationObserver((mutations) => {
+      // Check if any cart drawer or cart summary elements were added
+      for (const mutation of mutations) {
+        if (mutation.addedNodes.length > 0) {
+          // Look for widget elements in the added nodes
+          mutation.addedNodes.forEach(node => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              // Check if the node itself is the widget
+              if (node.id === WIDGET_ID) {
+                initializeWidget();
+              }
+              // Check if the node contains the widget
+              else if (node.querySelector && node.querySelector(`#${WIDGET_ID}`)) {
+                initializeWidget();
+              }
+            }
+          });
+        }
+      }
+    });
+
+    // Start observing the document body for changes
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    return observer;
   }
 
   // Auto-initialize when DOM is ready
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeWidget);
+    document.addEventListener('DOMContentLoaded', () => {
+      initializeWidget();
+      observeCartDrawer();
+    });
   } else {
     initializeWidget();
+    observeCartDrawer();
   }
 
   // Also expose for manual initialization
   window.DKGTokenWidget = DKGTokenWidget;
+  window.initializeDKGWidget = initializeWidget;
 
 })();
 

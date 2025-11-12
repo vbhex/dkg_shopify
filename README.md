@@ -252,17 +252,42 @@ pm2 startup
 
 #### 3. Add Widget to Storefront
 
-Add this code to your theme's `theme.liquid` file (just before the closing `</body>` tag):
+**Recommended: Cart Page** (best placement for discount code generation)
 
-```html
-<script src="https://group.deakee.com/storefront/dkg-widget.js" defer></script>
-<div id="dkg-token-widget" data-shop="{{ shop.permanent_domain }}"></div>
+Add this code to your theme's cart page (`sections/main-cart.liquid` or `templates/cart.liquid`):
+
+```liquid
+<!-- DKG Token Holder Widget -->
+<div style="margin: 30px 0;">
+  <script src="https://group.deakee.com/storefront/dkg-widget.js" defer></script>
+  <div id="dkg-token-widget" data-shop="{{ shop.permanent_domain }}"></div>
+</div>
 ```
+
+**Alternative: Product Pages**
+Add to `sections/main-product.liquid` or `templates/product.liquid`
+
+**Alternative: All Pages**
+Add to `layout/theme.liquid` (just before the closing `</body>` tag)
+
+**For Shopify Plus: Checkout Page**
+Add to **Settings → Checkout → Additional scripts** for the best user experience.
+
+📖 **See complete placement guide:** `docs/WIDGET_PLACEMENT.md`
 
 **Notes:**
 - The `defer` attribute prevents blocking page rendering (fixes Shopify's ParserBlockingScript warning)
 - `{{ shop.permanent_domain }}` is a Liquid variable that automatically passes your shop's domain
 - You can also add this to specific pages like `product.liquid` or `cart.liquid` if you only want it on certain pages
+
+**Widget Features:**
+- 🎨 Compact, modern design (max-width: 400px, centered)
+- 📱 Mobile responsive with gradient purple background
+- 🔄 Automatic token balance verification on Ethereum Sepolia
+- 💰 Real-time discount eligibility checking
+- 📋 One-click discount code copying to clipboard
+- 🔒 Secure wallet signature verification (no gas fees)
+- ⚡ Fast loading with `defer` attribute (non-blocking)
 
 ### For Customers
 

@@ -29,13 +29,34 @@ app.use(compression());
 app.use(cookieParser());
 app.use(express.json());
 
-// CORS configuration
+// CORS configuration - Allow requests from any Shopify store
 app.use(
   cors({
-    origin: process.env.NODE_ENV === 'production' 
-      ? [process.env.SHOPIFY_APP_URL] 
-      : ['http://localhost:3000', 'http://localhost:8080'],
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      // Allow any Shopify store domain
+      if (origin.includes('.myshopify.com') || origin.includes('shopify.com')) {
+        return callback(null, true);
+      }
+      
+      // Allow localhost for development
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+        return callback(null, true);
+      }
+      
+      // Allow the app's own domain
+      if (origin.includes('group.deakee.com') || origin.includes('deakee.com')) {
+        return callback(null, true);
+      }
+      
+      // Reject other origins
+      callback(new Error('Not allowed by CORS'));
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 

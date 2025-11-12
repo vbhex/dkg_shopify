@@ -33,6 +33,7 @@ router.post('/init', async (req, res) => {
         shopDomain: shop,
         sessionToken,
         walletAddress: walletAddress.toLowerCase(),
+        nonce, // Store the nonce for later verification
         chainId: chainId || 1,
         status: 'pending',
         expiresAt,
@@ -86,9 +87,8 @@ router.post('/signature', async (req, res) => {
       return res.status(400).json({ error: 'Session expired' });
     }
 
-    // Reconstruct the message
-    const nonce = sessionToken.substring(0, 32);
-    const message = blockchainService.generateVerificationMessage(session.shopDomain, nonce);
+    // Reconstruct the message using the stored nonce
+    const message = blockchainService.generateVerificationMessage(session.shopDomain, session.nonce);
 
     // Verify signature
     const isValid = blockchainService.verifySignature(
